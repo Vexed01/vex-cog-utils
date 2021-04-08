@@ -8,7 +8,7 @@ from .consts import CHECK, CROSS, DOCS_BASE
 
 
 def format_help(self: commands.Cog, ctx: commands.Context) -> str:
-    """Wrapper for format_help_for_context. **Not** for use outside my cogs.
+    """Wrapper for format_help_for_context. **Not** currently for use outside my cogs.
 
     Thanks Sinbad.
 
@@ -31,8 +31,8 @@ def format_help(self: commands.Cog, ctx: commands.Context) -> str:
     # adding docs link here so doesn't show up in auto generated docs
 
 
-def format_info(qualified_name: str, version: str, loops: Optional[Dict[str, Loop]] = {}) -> str:
-    """Generate simple info text about the cog. **Can** be used outside my cogs.
+def format_info(qualified_name: str, version: str, extras: Optional[Dict[str, bool]] = {}) -> str:
+    """Generate simple info text about the cog. **Not** currently for use outside my cogs.
 
     Parameters
     ----------
@@ -52,8 +52,8 @@ def format_info(qualified_name: str, version: str, loops: Optional[Dict[str, Loo
     end = f"Version: `{version}`"
 
     extra = ""
-    for name, loop in loops.items():
-        extra += f"{name}: `{CHECK if loop.is_running() else CROSS}`\n"
+    for key, value in extras.items():
+        extra += f"{key}: `{CHECK if value else CROSS}`\n"
 
     return f"{start}{extra}{end}"
 
