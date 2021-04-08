@@ -1,7 +1,8 @@
-from typing import Dict, Optional
+from typing import Dict, Optional, Sequence
 
 from discord.ext.tasks import Loop
 from redbot.core import commands
+from redbot.core.utils.chat_formatting import humanize_list, inline
 
 from .consts import CHECK, CROSS, DOCS_BASE
 
@@ -55,3 +56,30 @@ def format_info(qualified_name: str, version: str, loops: Optional[Dict[str, Loo
         extra += f"{name}: `{CHECK if loop.is_running() else CROSS}`\n"
 
     return f"{start}{extra}{end}"
+
+
+# maybe think about adding to core
+def inline_hum_list(items: Sequence[str], *, style: str = "standard") -> str:
+    """Similar to core's humanize_list, but all items are in inline code blocks.
+
+    Strips leading and trailing whitespace.
+
+    Does not support locale.
+
+    Does support style (see core's docs for available styles)
+
+    Parameters
+    ----------
+    items : Sequence[str]
+        The items to humanize
+    style : str, optional
+        The style. See core's docs, by default "standard"
+
+    Returns
+    -------
+    str
+        Humanized inline list.
+    """
+    inline_list = [inline(i.strip()) for i in items]
+    print(inline_list)
+    return humanize_list(inline_list, style=style)
