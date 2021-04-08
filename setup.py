@@ -8,7 +8,7 @@ setup(
     description="Utility functions for the Vex-Cogs repo.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    packages=["cogutils"],
+    packages=["vexcogutils"],
     install_requires=["Red-DiscordBot"],  # for some chat stuff
     version="0.0.0",
 )

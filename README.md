@@ -3,9 +3,9 @@
 Utility functions for the Vex-Cogs repo.
 
 There is nothing stopping you from using this in your own cogs, however some of the stuff here is geared towards my cogs. I would recommend you pin the version.
+Example of pinned install in info.json: ``git+https://github.com/Vexed01/vex-cog-utils.git@v1.0.0``
 
 Docstrings fully document each function.
-
 
 ## Versioning
 
