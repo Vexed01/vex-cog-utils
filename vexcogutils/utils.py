@@ -40,8 +40,8 @@ def format_info(qualified_name: str, version: str, extras: Optional[Dict[str, bo
         The name you want to show, eg "BetterUptime"
     version : str
         The version of the cog
-    loops : Dict[str, Loop], optional
-        Dict with name as the key and the discord.py loop as the value, by default {}
+    extras : Dict[str, bool], optional
+        Dict with name as the key a bool as the value, by default {}
 
     Returns
     -------
@@ -60,7 +60,7 @@ def format_info(qualified_name: str, version: str, extras: Optional[Dict[str, bo
 
 # maybe think about adding to core
 def inline_hum_list(items: Sequence[str], *, style: str = "standard") -> str:
-    """Similar to core's humanize_list, but all items are in inline code blocks.
+    """Similar to core's humanize_list, but all items are in inline code blocks. **Can** be used outside my cogs.
 
     Strips leading and trailing whitespace.
 
