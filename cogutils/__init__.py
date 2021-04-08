@@ -1,1 +1,2 @@
-import chat, help
+import .chat
+import .help
