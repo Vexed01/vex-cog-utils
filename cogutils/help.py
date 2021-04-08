@@ -50,8 +50,8 @@ def format_info(qualified_name: str, version: str, loops: Optional[Dict[str, Loo
     start = f"{qualified_name} by Vexed.\n<https://github.com/Vexed01/Vex-Cogs>\n\n"
     end = f"Version: `{version}`"
 
-    loops = ""
+    extra = ""
     for name, loop in loops.items():
-        loops += f"{name}: `{CHECK if loop.is_running() else CROSS}`\n"
+        extra += f"{name}: `{CHECK if loop.is_running() else CROSS}`\n"
 
     return f"{start}{loops}{end}"

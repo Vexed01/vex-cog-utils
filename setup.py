@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(
-    name="Vex-Cog-Utils",
+    name="vex-cog-utils",
     url="https://github.com/Vexed01/vex-cog-utils",
     author="Vexed01",
     author_email="gh.vexed@gmail.com",
