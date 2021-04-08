@@ -54,4 +54,4 @@ def format_info(qualified_name: str, version: str, loops: Optional[Dict[str, Loo
     for name, loop in loops.items():
         extra += f"{name}: `{CHECK if loop.is_running() else CROSS}`\n"
 
-    return f"{start}{loops}{end}"
+    return f"{start}{extra}{end}"
