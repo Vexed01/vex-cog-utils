@@ -9,6 +9,5 @@ setup(
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     packages=["vexcogutils"],
-    install_requires=["Red-DiscordBot"],  # for some chat stuff
     version="0.0.1",
 )
