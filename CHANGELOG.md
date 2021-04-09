@@ -2,6 +2,10 @@
 
 I will endeavour to keep a basic changelog.
 
+## ``1.0.1``
+
+- Add ``py.typed``
+
 ## ``1.0.0``
 
 Stable release. Only one function intended for public use; ``inline_hum_list``.

@@ -27,7 +27,10 @@ def format_help(self: commands.Cog, ctx: commands.Context) -> str:
     docs = DOCS_BASE.format(self.qualified_name.lower())
     pre_processed = super(type(self), self).format_help_for_context(ctx)
 
-    return f"{pre_processed}\n\nAuthor: **`{self.__author__}`**\nCog Version: **`{self.__version__}`**\n{docs}"
+    return (
+        f"{pre_processed}\n\nAuthor: **`{self.__author__}`**\nCog Version: "
+        f"**`{self.__version__}`**\n{docs}"
+    )
     # adding docs link here so doesn't show up in auto generated docs
 
 
@@ -60,7 +63,8 @@ def format_info(qualified_name: str, version: str, extras: Optional[Dict[str, bo
 
 # maybe think about adding to core
 def inline_hum_list(items: Sequence[str], *, style: str = "standard") -> str:
-    """Similar to core's humanize_list, but all items are in inline code blocks. **Can** be used outside my cogs.
+    """Similar to core's humanize_list, but all items are in inline code blocks. **Can** be used
+    outside my cogs.
 
     Strips leading and trailing whitespace.
 
