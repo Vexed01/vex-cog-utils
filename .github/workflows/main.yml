@@ -23,10 +23,10 @@ jobs:
 
     - name: Run black
       run: |
-        python -m black --check --line-length 120 .
+        python -m black --check --line-length 99 .
     - name: Run isort
       run: |
-        python -m isort --check --line-length 120 --trailing-comma .
+        python -m isort --check --line-length 99 --trailing-comma .
 
   lint:
     runs-on: ubuntu-latest
