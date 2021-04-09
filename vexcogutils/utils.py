@@ -1,6 +1,5 @@
 from typing import Dict, Optional, Sequence
 
-from discord.ext.tasks import Loop
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import humanize_list, inline
 
@@ -34,7 +33,7 @@ def format_help(self: commands.Cog, ctx: commands.Context) -> str:
     # adding docs link here so doesn't show up in auto generated docs
 
 
-def format_info(qualified_name: str, version: str, extras: Optional[Dict[str, bool]] = {}) -> str:
+def format_info(qualified_name: str, version: str, extras: Dict[str, bool] = {}) -> str:
     """Generate simple info text about the cog. **Not** currently for use outside my cogs.
 
     Parameters
