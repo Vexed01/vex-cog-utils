@@ -1,4 +1,4 @@
-from typing import Dict, Optional, Sequence
+from typing import Dict, Sequence
 
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import humanize_list, inline
