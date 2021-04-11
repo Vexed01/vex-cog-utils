@@ -1,0 +1,34 @@
+name: Publish to PyPI
+
+on:
+  release:
+    types:
+      - created
+
+jobs:
+  publish:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up 3.8
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install dependencies
+        run: |
+          pip install build twine
+
+      - name: Build  # we love building for only 1 thing
+        run: |
+          python -m build
+
+      - name: Publish
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
+          repository_url: https://test.pypi.org/legacy/
