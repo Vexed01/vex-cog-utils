@@ -84,5 +84,4 @@ def inline_hum_list(items: Sequence[str], *, style: str = "standard") -> str:
         Humanized inline list.
     """
     inline_list = [inline(i.strip()) for i in items]
-    print(inline_list)
     return humanize_list(inline_list, style=style)
