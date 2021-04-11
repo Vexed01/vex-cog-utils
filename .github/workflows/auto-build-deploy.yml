@@ -1,24 +1,14 @@
-# from https://github.com/joerick/cibuildwheel/blob/master/examples/github-deploy.yml
+# partially based on https://github.com/joerick/cibuildwheel/blob/master/examples/github-deploy.yml
 
-name: Build and upload to PyPI
-
-# Build on every branch push, tag push, and pull request change:
 on: [push, pull_request]
-# Alternatively, to publish when a (published) GitHub Release is created, use the following:
-# on:
-#   push:
-#   pull_request:
-#   release:
-#     types:
-#       - published
 
 jobs:
-  build_wheels:
+  win_mac_wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-20.04, windows-2019, macos-10.15]
+        os: [windows-2019, macos-10.15]
 
     steps:
       - uses: actions/checkout@v2
@@ -28,16 +18,23 @@ jobs:
         with:
           python-version: '3.8'
 
-      # - name: Install Visual C++ for Python 2.7
-      #   if: runner.os == 'Windows'
-      #   run: choco install vcpython27 -f -y
-
       - name: Build wheels
-        uses: joerick/cibuildwheel@v1.10.0
+        run: setup.py bdist_wheel
 
       - uses: actions/upload-artifact@v2
         with:
           path: ./wheelhouse/*.whl
+
+  linux_wheels:
+    name: Build wheels on Linux
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Build manylinux Python wheels
+        uses: RalfG/python-wheels-manylinux-build@v0.3.3-manylinux2010_x86_64
+        with:
+          python-versions: 'cp38-cp38'
+          pip-wheel-args: '-w ./wheelhouse'
 
   build_sdist:
     name: Build source distribution
@@ -57,13 +54,12 @@ jobs:
         with:
           path: dist/*.tar.gz
 
-  upload_pypi:
-    name: Upload to PyPI
-    needs: [build_wheels, build_sdist]
+  publish:
+    name: Publish to PyPI
+    needs: [win_mac_wheels,linux_wheels, build_sdist]
     runs-on: ubuntu-latest
-    # upload to PyPI on every tag starting with 'v'
-    # if: github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags/v')
-    # alternatively, to publish when a GitHub Release is created, use the following rule:
+
+    # only publish if new release
     if: github.event_name == 'release' && github.event.action == 'published'
     steps:
       - uses: actions/download-artifact@v2
