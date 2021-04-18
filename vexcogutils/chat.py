@@ -1,4 +1,4 @@
-from typing import Sequence, SupportsRound, Union
+from typing import Sequence, Union
 
 from redbot.core.utils.chat_formatting import humanize_list, humanize_number, inline
 
@@ -8,7 +8,7 @@ def _hum(num: Union[int, float], unit: str, ndigits: int) -> str:
     return humanize_number(round(num, ndigits)) + f" {unit}"
 
 
-def humanize_bytes(bytes: SupportsRound, ndigits: int = 0) -> str:
+def humanize_bytes(bytes: Union[int, float], ndigits: int = 0) -> str:
     """Humanize a number of bytes, rounding to ndigits. Only supports up to GB.
 
     This assumes 1GB = 1000MB, 1MB = 1000KB, 1KB = 1000B"""

@@ -1,7 +1,6 @@
-from typing import Dict, Sequence
+from typing import Dict
 
 from redbot.core import commands
-from redbot.core.utils.chat_formatting import humanize_list, inline
 
 from .consts import CHECK, CROSS, DOCS_BASE
 
