@@ -2,6 +2,11 @@
 
 I will endeavour to keep a basic changelog.
 
+## ``1.1.0``
+
+- Internal refactor
+- New ``humanize_bytes``
+
 ## ``1.0.1``
 
 - Add ``py.typed``

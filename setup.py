@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="vex-cog-utils",
-    version="1.0.4",
+    version="1.1.0",
     url="https://github.com/Vexed01/vex-cog-utils",
     author="Vexed01",
     author_email="gh.vexed@gmail.com",
@@ -12,7 +12,6 @@ setup(
     packages=["vexcogutils"],
     classifiers=[
         "License :: OSI Approved :: MIT License",
-        "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.8",
         "Operating System :: OS Independent",
     ],
