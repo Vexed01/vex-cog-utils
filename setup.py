@@ -2,7 +2,7 @@ from pathlib import Path
 
 from setuptools import setup
 
-exc = {}
+exc: dict = {}
 with open(Path(__file__).parent / "vexcogutils" / "version.py") as fp:
     exec(fp.read(), exc)
 version = exc["__version__"]
