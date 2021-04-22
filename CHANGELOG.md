@@ -2,6 +2,15 @@
 
 I will endeavour to keep a basic changelog.
 
+## ``1.1.2``
+
+- Add utils version to ``format_info``
+- Internal changes to how version is done.
+
+## ``1.1.1``
+
+No changes.
+
 ## ``1.1.0``
 
 - Internal refactor
