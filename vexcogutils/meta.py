@@ -3,6 +3,7 @@ from typing import Dict
 from redbot.core import commands
 
 from .consts import CHECK, CROSS, DOCS_BASE
+from .version import __version__
 
 
 def format_help(self: commands.Cog, ctx: commands.Context) -> str:
@@ -50,7 +51,7 @@ def format_info(qualified_name: str, version: str, extras: Dict[str, bool] = {})
         Simple info text.
     """
     start = f"{qualified_name} by Vexed.\n<https://github.com/Vexed01/Vex-Cogs>\n\n"
-    end = f"Version: `{version}`"
+    end = f"Cog Version: `{version}`\nUtils Version: {__version__}"
 
     extra = ""
     for key, value in extras.items():

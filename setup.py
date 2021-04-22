@@ -1,8 +1,16 @@
+from pathlib import Path
+
 from setuptools import setup
+
+exc = {}
+with open(Path(__file__).parent / "vexcogutils" / "version.py") as fp:
+    exec(fp.read(), exc)
+version = exc["__version__"]
+
 
 setup(
     name="vex-cog-utils",
-    version="1.1.1",
+    version=version,
     url="https://github.com/Vexed01/vex-cog-utils",
     author="Vexed01",
     author_email="gh.vexed@gmail.com",
