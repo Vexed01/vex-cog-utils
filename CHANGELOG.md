@@ -2,6 +2,10 @@
 
 I will endeavour to keep a basic changelog.
 
+## ``1.1.2`` (hotfix)
+
+- Make utils version inline
+
 ## ``1.1.2``
 
 - Add utils version to ``format_info``
