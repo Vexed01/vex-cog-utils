@@ -18,6 +18,8 @@ setup(
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     packages=["vexcogutils"],
+    package_data={"vexcogutils": ["py.typed"]},
+    include_package_data=True,
     classifiers=[
         "License :: OSI Approved :: MIT License",
         "Programming Language :: Python :: 3.8",
