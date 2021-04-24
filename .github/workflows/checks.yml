@@ -16,7 +16,6 @@ jobs:
           - style-isort
           - lint-flake8
           - type-mypy
-          - docs
         include:
           - tox_env: style-black
             friendly_name: Style (black)
@@ -26,8 +25,6 @@ jobs:
             friendly_name: Lint (flake8)
           - tox_env: type-mypy
             friendly_name: Type check (mypy)
-          - tox_env: docs
-            friendly_name: Docs
 
       fail-fast: false
 
