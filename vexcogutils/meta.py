@@ -1,6 +1,8 @@
-from typing import Dict
+from typing import Dict, List
 
 from redbot.core import commands
+
+from vexcogutils.loop import VexLoop
 
 from .consts import CHECK, CROSS, DOCS_BASE
 from .version import __version__
@@ -33,7 +35,9 @@ def format_help(self: commands.Cog, ctx: commands.Context) -> str:
     # adding docs link here so doesn't show up in auto generated docs
 
 
-def format_info(qualified_name: str, version: str, extras: Dict[str, bool] = {}) -> str:
+def format_info(
+    qualified_name: str, version: str, extras: Dict[str, bool] = {}, loops: List[VexLoop] = []
+) -> str:
     """Generate simple info text about the cog. **Not** currently for use outside my cogs.
 
     Parameters
@@ -44,6 +48,8 @@ def format_info(qualified_name: str, version: str, extras: Dict[str, bool] = {})
         The version of the cog
     extras : Dict[str, bool], optional
         Dict with name as the key a bool as the value, by default {}
+    loops : List[VexLoop], optional
+        List of VexLoops you want to show
 
     Returns
     -------
@@ -54,6 +60,8 @@ def format_info(qualified_name: str, version: str, extras: Dict[str, bool] = {})
     end = f"Cog Version: `{version}`\nUtils Version: `{__version__}`"
 
     extra = ""
+    for loop in loops:
+        extra += f"{loop.friendly_name}: `{CHECK if loop.integrity else CROSS}`\n"
     for key, value in extras.items():
         extra += f"{key}: `{CHECK if value else CROSS}`\n"
 
