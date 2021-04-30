@@ -2,6 +2,16 @@
 
 I will endeavour to keep a basic changelog.
 
+## ``1.2.0``
+
+- Add new utility: loop.VexLoop
+- This can be used to keep track of the status of a loop and calculate how much time should pass until the next iteration
+- New optional parameter in ``format_info`` which will show the integrity of the loops
+
+## ``1.1.3``
+
+- Include ``py.typed`` in package data
+
 ## ``1.1.2`` (hotfix)
 
 - Make utils version inline

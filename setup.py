@@ -26,4 +26,5 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.8.1",
+    install_requires=["tabulate"],
 )
