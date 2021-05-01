@@ -28,8 +28,8 @@ class VexLoop:
         self.last_exc: str = "No exception has occurred yet."
         self.last_exc_raw: Optional[BaseException] = None
 
-        self.last_iter: datetime.datetime = datetime.datetime(year=1, month=1, day=1)
-        self.next_iter: datetime.datetime = datetime.datetime(year=1, month=1, day=1)
+        self.last_iter: Optional[datetime.datetime] = None
+        self.next_iter: Optional[datetime.datetime] = None
 
     def __repr__(self) -> str:
         return (
@@ -43,6 +43,8 @@ class VexLoop:
         """
         If the loop is running on time (whether or not next expected iteration is in the future)
         """
+        if self.next_iter is None:  # not started yet
+            return False
         return self.next_iter > datetime.datetime.utcnow()
 
     @property
@@ -53,6 +55,9 @@ class VexLoop:
 
         If the expected time of the next iteration is in the past, this will return `0.0`
         """
+        if self.next_iter is None:  # not started yet
+            return 0.0
+
         raw_until_next = (self.next_iter - datetime.datetime.utcnow()).total_seconds()
         if raw_until_next > self.expected_interval.total_seconds():  # should never happen
             return self.expected_interval.total_seconds()
@@ -96,16 +101,21 @@ class VexLoop:
             ["next_iter", self.next_iter],
         ]
         now = datetime.datetime.utcnow()
-        processed_data = [
-            ["Seconds until next", (self.next_iter - now).total_seconds()],
-            ["Seconds since last", (now - self.last_iter).total_seconds()],
-        ]
+        if self.next_iter and self.last_iter:
+            processed_data = [
+                ["Seconds until next", (self.next_iter - now).total_seconds()],
+                ["Seconds since last", (now - self.last_iter).total_seconds()],
+            ]
+        else:
+            processed_data = []
 
         emoji = CHECK if self.integrity else CROSS
         embed = discord.Embed(title=f"{self.friendly_name}: `{emoji}`")
         embed.add_field(name="Raw data", value=box(tabulate.tabulate(raw_data)), inline=False)
         embed.add_field(
-            name="Processed data", value=box(tabulate.tabulate(processed_data)), inline=False
+            name="Processed data",
+            value=box(tabulate.tabulate(processed_data) or "Loop hasn't started yet."),
+            inline=False,
         )
         exc = self.last_exc
         if len(exc) > 1024:

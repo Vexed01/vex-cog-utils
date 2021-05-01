@@ -2,6 +2,10 @@
 
 I will endeavour to keep a basic changelog.
 
+## ``1.3.0``
+
+- BREAKING: VexLoop ``next_iter`` and ``last_iter`` will now be None instead of datetime when loop hasn't started yet.
+
 ## ``1.2.0``
 
 - Add new utility: loop.VexLoop
