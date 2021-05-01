@@ -1,7 +1,7 @@
 import asyncio
 import datetime
 import traceback
-from typing import Optional
+from typing import List, Optional
 
 import discord
 import tabulate
@@ -93,21 +93,23 @@ class VexLoop:
 
     def get_debug_embed(self) -> discord.Embed:
         """Get an embed with infomation on this loop."""
-        raw_data = [
+        raw_data: List[list] = [
             ["expected_interval", self.expected_interval],
             ["iter_count", self.iter_count],
             ["currently_running", self.currently_running],
-            ["last_iter", self.last_iter],
-            ["next_iter", self.next_iter],
+            ["last_iter", self.last_iter or "Loop not started"],
+            ["next_iter", self.next_iter or "Loop not started"],
         ]
+
         now = datetime.datetime.utcnow()
+        processed_data: List[list]
         if self.next_iter and self.last_iter:
             processed_data = [
                 ["Seconds until next", (self.next_iter - now).total_seconds()],
                 ["Seconds since last", (now - self.last_iter).total_seconds()],
             ]
         else:
-            processed_data = []
+            processed_data = [[]]
 
         emoji = CHECK if self.integrity else CROSS
         embed = discord.Embed(title=f"{self.friendly_name}: `{emoji}`")
