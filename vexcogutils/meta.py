@@ -59,9 +59,11 @@ def format_info(
     start = f"{qualified_name} by Vexed.\n<https://github.com/Vexed01/Vex-Cogs>\n\n"
     end = f"Cog Version: `{version}`\nUtils Version: `{__version__}`"
 
-    extra = ""
-    for loop in loops:
-        extra += f"{loop.friendly_name}: `{CHECK if loop.integrity else CROSS}`\n"
+    extra = "".join(
+        f"{loop.friendly_name}: `{CHECK if loop.integrity else CROSS}`\n"
+        for loop in loops
+    )
+
     for key, value in extras.items():
         extra += f"{key}: `{CHECK if value else CROSS}`\n"
 
