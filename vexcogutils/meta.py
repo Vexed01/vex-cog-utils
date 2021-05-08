@@ -60,8 +60,7 @@ def format_info(
     end = f"Cog Version: `{version}`\nUtils Version: `{__version__}`"
 
     extra = "".join(
-        f"{loop.friendly_name}: `{CHECK if loop.integrity else CROSS}`\n"
-        for loop in loops
+        f"{loop.friendly_name}: `{CHECK if loop.integrity else CROSS}`\n" for loop in loops
     )
 
     for key, value in extras.items():
