@@ -21,7 +21,7 @@ def humanize_bytes(bytes: Union[int, float], ndigits: int = 0) -> str:
     if bytes > 10000:  # 10KB
         kb = bytes / 1000
         return _hum(kb, "KB", ndigits)
-    return _hum(bytes, "B", ndigits)
+    return _hum(bytes, "B", 0)  # no point in rounding
 
 
 # maybe think about adding to core
