@@ -1,8 +1,10 @@
 from typing import Dict, List, Tuple, Union
 
 import aiohttp
+import tabulate
 from packaging import version  # required by setuptools which is required by red
 from redbot.core import commands
+from redbot.core.utils.chat_formatting import box
 
 from vexcogutils.loop import VexLoop
 
@@ -38,7 +40,10 @@ def format_help(self: commands.Cog, ctx: commands.Context) -> str:
 
 
 async def format_info(
-    qualified_name: str, cog_version: str, extras: Dict[str, bool] = {}, loops: List[VexLoop] = []
+    qualified_name: str,
+    cog_version: str,
+    extras: Dict[str, Union[str, bool]] = {},
+    loops: List[VexLoop] = [],
 ) -> str:
     """Generate simple info text about the cog. **Not** currently for use outside my cogs.
 
@@ -48,10 +53,11 @@ async def format_info(
         The name you want to show, eg "BetterUptime"
     cog_version : str
         The version of the cog
-    extras : Dict[str, bool], optional
-        Dict with name as the key a bool as the value, by default {}
+    extras : Dict[str, Union[str, bool]], optional
+        Dict which is foramtted as key: value\\n. Bools as a value will be replaced with
+        check/cross emojis, by default {}
     loops : List[VexLoop], optional
-        List of VexLoops you want to show
+        List of VexLoops you want to show, by default []
 
     Returns
     -------
@@ -59,7 +65,7 @@ async def format_info(
         Simple info text.
     """
     try:
-        latest_cog, latest_utils = _get_latest_ver(qualified_name.lower())
+        latest_cog, latest_utils = await _get_latest_ver(qualified_name.lower())
         cog_updated = CHECK if version.parse(cog_version) >= version.parse(latest_cog) else CROSS
         utils_updated = (
             CHECK if version.parse(__version__) >= version.parse(latest_utils) else CROSS
@@ -68,19 +74,28 @@ async def format_info(
         cog_updated = "Unknown"
         utils_updated = "Unknown"
     start = f"{qualified_name} by Vexed.\n<https://github.com/Vexed01/Vex-Cogs>\n\n"
-    end = (
-        f"Cog Version: `{cog_version}`, up to date: `{cog_updated}`\n"
-        f"Utils Version: `{__version__}`, up to date: `{utils_updated}`"
-    )
+    data = [
+        ["Cog Version", cog_version],
+        ["Cog up to date", cog_updated],
+        ["Utils Version", __version__],
+        ["Utils up to data", utils_updated],
+    ]
 
-    extra = "".join(
-        f"{loop.friendly_name}: `{CHECK if loop.integrity else CROSS}`\n" for loop in loops
-    )
+    if loops:
+        data.append([])
+        for loop in loops:
+            data.append([loop.friendly_name, CHECK if loop.integrity else CROSS])
 
-    for key, value in extras.items():
-        extra += f"{key}: `{CHECK if value else CROSS}`\n"
+    if extras:
+        data.append([])
+        for key, value in extras.items():
+            if isinstance(value, bool):
+                value = CHECK if value else CROSS
+            data.append([key, value])
 
-    return f"{start}{extra}{end}"
+    boxed = box(tabulate.tabulate(data))
+
+    return f"{start}\n{boxed}"
 
 
 async def _get_latest_ver(cog_name: str) -> Tuple[str, str]:
