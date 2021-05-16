@@ -1,4 +1,4 @@
-from typing import Dict, List, Mapping, Tuple, Union
+from typing import Dict, List, Mapping, Tuple
 
 import aiohttp
 import tabulate
@@ -90,8 +90,11 @@ async def format_info(
         data.append([])
         for key, value in extras.items():
             if isinstance(value, bool):
-                value = CHECK if value else CROSS
-            data.append([key, value])
+                str_value = CHECK if value else CROSS
+            else:
+                assert isinstance(value, str)
+                str_value = value
+            data.append([key, str_value])
 
     boxed = box(tabulate.tabulate(data))
 
