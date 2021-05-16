@@ -1,4 +1,4 @@
-from typing import Dict, List, Tuple, Union
+from typing import Dict, List, Mapping, Tuple, Union
 
 import aiohttp
 import tabulate
@@ -42,7 +42,7 @@ def format_help(self: commands.Cog, ctx: commands.Context) -> str:
 async def format_info(
     qualified_name: str,
     cog_version: str,
-    extras: Dict[str, Union[str, bool]] = {},
+    extras: Dict[str, Mapping[str, bool]] = {},
     loops: List[VexLoop] = [],
 ) -> str:
     """Generate simple info text about the cog. **Not** currently for use outside my cogs.
@@ -53,7 +53,7 @@ async def format_info(
         The name you want to show, eg "BetterUptime"
     cog_version : str
         The version of the cog
-    extras : Dict[str, Union[str, bool]], optional
+    extras : Dict[str, Mapping[str, bool]], optional
         Dict which is foramtted as key: value\\n. Bools as a value will be replaced with
         check/cross emojis, by default {}
     loops : List[VexLoop], optional
