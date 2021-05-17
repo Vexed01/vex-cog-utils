@@ -108,7 +108,7 @@ async def format_info(
     if data:
         boxed += box(tabulate.tabulate(data))
 
-    return f"{start}\n{boxed}"
+    return f"{start}{boxed}"
 
 
 async def _get_latest_ver(cog_name: str) -> Tuple[Optional[str], Optional[str]]:
