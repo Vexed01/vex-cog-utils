@@ -104,9 +104,9 @@ async def format_info(
                 str_value = value
             data.append([key, str_value])
 
-    boxed = box(tabulate.tabulate(versions, headers=["", "Version", "Up to date?"])) + "\n"
+    boxed = box(tabulate.tabulate(versions, headers=["", "Version", "Up to date?"]))
     if data:
-        boxed += box(tabulate.tabulate(data))
+        boxed += box(tabulate.tabulate(data, tablefmt="simple"))
 
     return f"{start}{boxed}"
 
