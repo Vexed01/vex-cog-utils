@@ -1,4 +1,4 @@
-from typing import Dict, List, Mapping, Tuple
+from typing import Dict, List, Mapping, Optional, Tuple
 
 import aiohttp
 import tabulate
@@ -66,28 +66,36 @@ async def format_info(
     """
     try:
         latest_cog, latest_utils = await _get_latest_ver(qualified_name.lower())
-        cog_updated = CHECK if version.parse(cog_version) >= version.parse(latest_cog) else CROSS
-        utils_updated = (
-            CHECK if version.parse(__version__) >= version.parse(latest_utils) else CROSS
-        )
+        if latest_cog is None:
+            cog_updated = "Unknown"
+        else:
+            cog_updated = (
+                CHECK if version.parse(cog_version) >= version.parse(latest_cog) else CROSS
+            )
+
+        if latest_utils is None:
+            utils_updated = "Unknown"
+        else:
+            utils_updated = (
+                CHECK if version.parse(__version__) >= version.parse(latest_utils) else CROSS
+            )
     except Exception:  # anything and everything
         cog_updated = "Unknown"
         utils_updated = "Unknown"
     start = f"{qualified_name} by Vexed.\n<https://github.com/Vexed01/Vex-Cogs>\n\n"
-    data = [
-        ["Cog Version", cog_version],
-        ["Cog up to date", cog_updated],
-        ["Utils Version", __version__],
-        ["Utils up to data", utils_updated],
+    versions = [
+        ["Cog", cog_version, cog_updated],
+        ["Utils", __version__, utils_updated],
     ]
 
+    data = []
     if loops:
-        data.append([])
         for loop in loops:
             data.append([loop.friendly_name, CHECK if loop.integrity else CROSS])
 
     if extras:
-        data.append([])
+        if data:
+            data.append([])
         for key, value in extras.items():
             if isinstance(value, bool):
                 str_value = CHECK if value else CROSS
@@ -96,19 +104,21 @@ async def format_info(
                 str_value = value
             data.append([key, str_value])
 
-    boxed = box(tabulate.tabulate(data))
+    boxed = box(tabulate.tabulate(versions, headers=["", "Version", "Up to date?"])) + "\n"
+    if data:
+        boxed += box(tabulate.tabulate(data))
 
     return f"{start}\n{boxed}"
 
 
-async def _get_latest_ver(cog_name: str) -> Tuple[str, str]:
+async def _get_latest_ver(cog_name: str) -> Tuple[Optional[str], Optional[str]]:
     async with aiohttp.ClientSession() as session:
         resp = await session.get(
             "https://vexed01.github.io/Vex-Cogs/api/v1/versions.json", timeout=3  # impatient :aha:
         )
         as_dict: dict = await resp.json()
-        session.close()
+        await session.close()
 
-    latest_cog = as_dict.get("cogs", {}).get(cog_name, "Unknown")
-    latest_utils = as_dict.get("utils", "Unknown")
+    latest_cog = as_dict.get("cogs", {}).get(cog_name)
+    latest_utils = as_dict.get("utils")
     return latest_cog, latest_utils
