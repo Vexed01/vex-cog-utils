@@ -1,8 +1,8 @@
 from typing import Dict, List, Mapping, Optional, Tuple
 
 import aiohttp
+import semver
 import tabulate
-from packaging import version  # required by setuptools which is required by red
 from redbot.core import commands
 from redbot.core.utils.chat_formatting import box
 
@@ -69,19 +69,16 @@ async def format_info(
         if latest_cog is None:
             cog_updated = "Unknown"
         else:
-            cog_updated = (
-                CHECK if version.parse(cog_version) >= version.parse(latest_cog) else CROSS
-            )
+            cog_updated = semver.match(cog_version, ">=" + latest_cog)
 
         if latest_utils is None:
             utils_updated = "Unknown"
         else:
-            utils_updated = (
-                CHECK if version.parse(__version__) >= version.parse(latest_utils) else CROSS
-            )
-    except Exception:  # anything and everything
+            utils_updated = semver.match(__version__, ">=" + latest_utils)
+    except Exception:  # anything and everything, eg aiohttp error or semver error
         cog_updated = "Unknown"
         utils_updated = "Unknown"
+
     start = f"{qualified_name} by Vexed.\n<https://github.com/Vexed01/Vex-Cogs>\n\n"
     versions = [
         ["Cog", cog_version, cog_updated],
