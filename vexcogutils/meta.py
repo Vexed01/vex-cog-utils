@@ -1,3 +1,4 @@
+import json
 from typing import Dict, List, Mapping, Optional, Tuple
 
 import aiohttp
@@ -69,12 +70,12 @@ async def format_info(
         if latest_cog is None:
             cog_updated = "Unknown"
         else:
-            cog_updated = semver.match(cog_version, ">=" + latest_cog)
+            cog_updated = CHECK if semver.match(cog_version, ">=" + latest_cog) else CROSS
 
         if latest_utils is None:
             utils_updated = "Unknown"
         else:
-            utils_updated = semver.match(__version__, ">=" + latest_utils)
+            utils_updated = CHECK if semver.match(__version__, ">=" + latest_utils) else CROSS
     except Exception:  # anything and everything, eg aiohttp error or semver error
         cog_updated = "Unknown"
         utils_updated = "Unknown"
@@ -115,7 +116,6 @@ async def _get_latest_ver(cog_name: str) -> Tuple[Optional[str], Optional[str]]:
         )
         as_dict: dict = await resp.json()
         await session.close()
-
     latest_cog = as_dict.get("cogs", {}).get(cog_name)
     latest_utils = as_dict.get("utils")
     return latest_cog, latest_utils
