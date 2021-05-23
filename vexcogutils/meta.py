@@ -2,9 +2,8 @@ import json
 from typing import Dict, List, Mapping, Optional, Tuple
 
 import aiohttp
-import semver
 import tabulate
-from redbot.core import commands
+from redbot.core import VersionInfo, commands
 from redbot.core.utils.chat_formatting import box
 
 from vexcogutils.loop import VexLoop
@@ -70,12 +69,20 @@ async def format_info(
         if latest_cog is None:
             cog_updated = "Unknown"
         else:
-            cog_updated = CHECK if semver.match(cog_version, ">=" + latest_cog) else CROSS
+            cog_updated = (
+                CHECK
+                if VersionInfo.from_str(cog_version) >= VersionInfo.from_str(latest_cog)
+                else CROSS
+            )
 
         if latest_utils is None:
             utils_updated = "Unknown"
         else:
-            utils_updated = CHECK if semver.match(__version__, ">=" + latest_utils) else CROSS
+            utils_updated = (
+                CHECK
+                if VersionInfo.from_str(__version__) >= VersionInfo.from_str(latest_utils)
+                else CROSS
+            )
     except Exception:  # anything and everything, eg aiohttp error or semver error
         cog_updated = "Unknown"
         utils_updated = "Unknown"
@@ -104,7 +111,7 @@ async def format_info(
 
     boxed = box(tabulate.tabulate(versions, headers=["", "Version", "Up to date?"]))
     if data:
-        boxed += box(tabulate.tabulate(data, tablefmt="simple"))
+        boxed += box(tabulate.tabulate(data, tablefmt="plain"))
 
     return f"{start}{boxed}"
 
