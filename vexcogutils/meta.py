@@ -1,14 +1,16 @@
-from typing import Dict, List, Mapping, Optional, Tuple
+from typing import Dict, List, Mapping, Optional, Tuple, Union
 
 import aiohttp
 import tabulate
 from redbot.core import VersionInfo, commands
+from redbot.core import version_info as red_version
+from redbot.core.utils._internal_utils import fetch_latest_red_version_info
 from redbot.core.utils.chat_formatting import box
 
 from vexcogutils.loop import VexLoop
 
 from .consts import CHECK, CROSS, DOCS_BASE
-from .version import __version__
+from .version import __version__ as utils_version
 
 
 def format_help(self: commands.Cog, ctx: commands.Context) -> str:
@@ -41,7 +43,7 @@ def format_help(self: commands.Cog, ctx: commands.Context) -> str:
 async def format_info(
     qualified_name: str,
     cog_version: str,
-    extras: Dict[str, Mapping[str, bool]] = {},
+    extras: Dict[str, Union[str, bool]] = {},
     loops: List[VexLoop] = [],
 ) -> str:
     """Generate simple info text about the cog. **Not** currently for use outside my cogs.
@@ -52,7 +54,7 @@ async def format_info(
         The name you want to show, eg "BetterUptime"
     cog_version : str
         The version of the cog
-    extras : Dict[str, Mapping[str, bool]], optional
+    extras : Dict[str, Union[str, bool]], optional
         Dict which is foramtted as key: value\\n. Bools as a value will be replaced with
         check/cross emojis, by default {}
     loops : List[VexLoop], optional
@@ -79,17 +81,25 @@ async def format_info(
         else:
             utils_updated = (
                 CHECK
-                if VersionInfo.from_str(__version__) >= VersionInfo.from_str(latest_utils)
+                if VersionInfo.from_str(utils_version) >= VersionInfo.from_str(latest_utils)
                 else CROSS
             )
+
+        latest_red, _ = await fetch_latest_red_version_info()
+        if latest_red is None:
+            red_updated = "Unknown"
+        else:
+            red_updated = CHECK if red_version >= latest_red else CROSS
     except Exception:  # anything and everything, eg aiohttp error or semver error
         cog_updated = "Unknown"
         utils_updated = "Unknown"
+        red_updated = "Unknown"
 
     start = f"{qualified_name} by Vexed.\n<https://github.com/Vexed01/Vex-Cogs>\n\n"
     versions = [
         ["Cog", cog_version, cog_updated],
-        ["Utils", __version__, utils_updated],
+        ["Utils", utils_version, utils_updated],
+        ["Red", red_version, red_updated],
     ]
 
     data = []
