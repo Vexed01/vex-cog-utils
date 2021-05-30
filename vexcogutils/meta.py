@@ -1,4 +1,5 @@
-from typing import Dict, List, NamedTuple, Optional, Union
+from logging import getLogger
+from typing import Dict, List, NamedTuple, Union
 
 import aiohttp
 import tabulate
@@ -10,6 +11,8 @@ from vexcogutils.loop import VexLoop
 
 from .consts import CHECK, CROSS, DOCS_BASE
 from .version import __version__ as utils_version
+
+log = getLogger("red.vex-utils")
 
 
 def format_help(self: commands.Cog, ctx: commands.Context) -> str:
@@ -70,21 +73,11 @@ async def format_info(
     try:
         latest = await _get_latest_vers(qualified_name.lower())
 
-        if latest.cog is None:
-            cog_updated = "Unknown"
-        else:
-            cog_updated = CHECK if VersionInfo.from_str(cog_version) >= latest.cog else CROSS
-
-        if latest.utils is None:
-            utils_updated = "Unknown"
-        else:
-            utils_updated = CHECK if VersionInfo.from_str(utils_version) >= latest.utils else CROSS
-
-        if latest.red is None:
-            red_updated = "Unknown"
-        else:
-            red_updated = CHECK if red_version >= latest.red else CROSS
+        cog_updated = CHECK if VersionInfo.from_str(cog_version) >= latest.cog else CROSS
+        utils_updated = CHECK if VersionInfo.from_str(utils_version) >= latest.utils else CROSS
+        red_updated = CHECK if red_version >= latest.red else CROSS
     except Exception:  # anything and everything, eg aiohttp error or version parsing error
+        log.warning("Unable to parse versions.", exc_info=True)
         cog_updated = "Unknown"
         utils_updated = "Unknown"
         red_updated = "Unknown"
@@ -120,9 +113,9 @@ async def format_info(
 
 
 class Vers(NamedTuple):
-    cog: Optional[VersionInfo]
-    utils: Optional[VersionInfo]
-    red: Optional[VersionInfo]
+    cog: VersionInfo
+    utils: VersionInfo
+    red: VersionInfo
 
 
 async def _get_latest_vers(cog_name: str) -> Vers:
@@ -132,12 +125,12 @@ async def _get_latest_vers(cog_name: str) -> Vers:
             "https://vexed01.github.io/Vex-Cogs/api/v1/versions.json", timeout=3
         ) as r:
             data = await r.json()
-            latest_cog = VersionInfo.from_str(data.get("cogs", {}).get(cog_name))
+            latest_cog = VersionInfo.from_str(data.get("cogs", {}).get(cog_name, "0.0.0"))
         async with session.get("https://pypi.org/pypi/Red-DiscordBot/json", timeout=3) as r:
             data = await r.json()
-            latest_red = VersionInfo.from_str(data.get("info", {}).get("version"))
+            latest_red = VersionInfo.from_str(data.get("info", {}).get("version", "0.0.0"))
         async with session.get("https://pypi.org/pypi/vex-cog-utils/json", timeout=3) as r:
             data = await r.json()
-            latest_utils = VersionInfo.from_str(data.get("info", {}).get("version"))
+            latest_utils = VersionInfo.from_str(data.get("info", {}).get("version", "0.0.0"))
 
     return Vers(latest_cog, latest_utils, latest_red)
