@@ -1,10 +1,9 @@
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Dict, List, NamedTuple, Optional, Union
 
 import aiohttp
 import tabulate
 from redbot.core import VersionInfo, commands
 from redbot.core import version_info as red_version
-from redbot.core.utils._internal_utils import fetch_latest_red_version_info
 from redbot.core.utils.chat_formatting import box
 
 from vexcogutils.loop import VexLoop
@@ -69,31 +68,23 @@ async def format_info(
         Simple info text.
     """
     try:
-        latest_cog, latest_utils = await _get_latest_ver(qualified_name.lower())
-        if latest_cog is None:
+        latest = await _get_latest_vers(qualified_name.lower())
+
+        if latest.cog is None:
             cog_updated = "Unknown"
         else:
-            cog_updated = (
-                CHECK
-                if VersionInfo.from_str(cog_version) >= VersionInfo.from_str(latest_cog)
-                else CROSS
-            )
+            cog_updated = CHECK if VersionInfo.from_str(cog_version) >= latest.cog else CROSS
 
-        if latest_utils is None:
+        if latest.utils is None:
             utils_updated = "Unknown"
         else:
-            utils_updated = (
-                CHECK
-                if VersionInfo.from_str(utils_version) >= VersionInfo.from_str(latest_utils)
-                else CROSS
-            )
+            utils_updated = CHECK if VersionInfo.from_str(utils_version) >= latest.utils else CROSS
 
-        latest_red, _ = await fetch_latest_red_version_info()
-        if latest_red is None:
+        if latest.red is None:
             red_updated = "Unknown"
         else:
-            red_updated = CHECK if red_version >= latest_red else CROSS
-    except Exception:  # anything and everything, eg aiohttp error or semver error
+            red_updated = CHECK if red_version >= latest.red else CROSS
+    except Exception:  # anything and everything, eg aiohttp error or version parsing error
         cog_updated = "Unknown"
         utils_updated = "Unknown"
         red_updated = "Unknown"
@@ -128,13 +119,25 @@ async def format_info(
     return f"{start}{boxed}"
 
 
-async def _get_latest_ver(cog_name: str) -> Tuple[Optional[str], Optional[str]]:
+class Vers(NamedTuple):
+    cog: Optional[VersionInfo]
+    utils: Optional[VersionInfo]
+    red: Optional[VersionInfo]
+
+
+async def _get_latest_vers(cog_name: str) -> Vers:
+    data: dict
     async with aiohttp.ClientSession() as session:
-        resp = await session.get(
-            "https://vexed01.github.io/Vex-Cogs/api/v1/versions.json", timeout=3  # impatient :aha:
-        )
-        as_dict: dict = await resp.json()
-        await session.close()
-    latest_cog = as_dict.get("cogs", {}).get(cog_name)
-    latest_utils = as_dict.get("utils")
-    return latest_cog, latest_utils
+        async with session.get(
+            "https://vexed01.github.io/Vex-Cogs/api/v1/versions.json", timeout=3
+        ) as r:
+            data = await r.json()
+            latest_cog = VersionInfo.from_str(data.get("cogs", {}).get(cog_name))
+        async with session.get("https://pypi.org/pypi/Red-DiscordBot/json", timeout=3) as r:
+            data = await r.json()
+            latest_red = VersionInfo.from_str(data.get("info", {}).get("version"))
+        async with session.get("https://pypi.org/pypi/vex-cog-utils/json", timeout=3) as r:
+            data = await r.json()
+            latest_utils = VersionInfo.from_str(data.get("info", {}).get("version"))
+
+    return Vers(latest_cog, latest_utils, latest_red)
