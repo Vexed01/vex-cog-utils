@@ -40,6 +40,9 @@ def format_help(self: commands.Cog, ctx: commands.Context) -> str:
     # adding docs link here so doesn't show up in auto generated docs
 
 
+# TODO: get utils version directly from pypi and stop using red internal util
+
+
 async def format_info(
     qualified_name: str,
     cog_version: str,
@@ -99,7 +102,7 @@ async def format_info(
     versions = [
         ["Cog", cog_version, cog_updated],
         ["Utils", utils_version, utils_updated],
-        ["Red", red_version, red_updated],
+        ["Red", str(red_version), red_updated],
     ]
 
     data = []
