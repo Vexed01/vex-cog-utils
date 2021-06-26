@@ -1,6 +1,9 @@
-from typing import Sequence, Union
+import datetime
+from typing import Literal, Sequence, Union
 
 from redbot.core.utils.chat_formatting import humanize_list, humanize_number, inline
+
+TimestampFormat = Literal["f", "F", "d", "D", "t", "T", "R"]
 
 
 def _hum(num: Union[int, float], unit: str, ndigits: int) -> str:
@@ -49,3 +52,31 @@ def inline_hum_list(items: Sequence[str], *, style: str = "standard") -> str:
     """
     inline_list = [inline(i.strip()) for i in items]
     return humanize_list(inline_list, style=style)
+
+
+def datetime_to_timestamp(dt: datetime.datetime, format: TimestampFormat = "f") -> str:
+    """Generate a Discord timestamp from a datetime object.
+
+    <t:TIMESTAMP:FORMAT>
+
+    Parameters
+    ----------
+    dt : datetime.datetime
+        The datetime object to use
+    format : TimestampFormat, by default `f`
+        The format to pass to Discord.
+        - `f` short date time | `18 June 2021 02:50`
+        - `F` long date time  | `Friday, 18 June 2021 02:50`
+        - `d` short date      | `18/06/2021`
+        - `D` long date       | `18 June 2021`
+        - `t` short time      | `02:50`
+        - `T` long time       | `02:50:15`
+        - `R` relative time   | `8 days ago`
+
+    Returns
+    -------
+    str
+        Formatted timestamp
+    """
+    t = str(int(dt.timestamp()))
+    return f"<t:{t}:{format}>"

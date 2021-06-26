@@ -15,13 +15,3 @@ Docstrings fully document each function.
 ``major.minor.patch``
 
 Major releases are likely to include breaking changes. There **can** me breaking changes in minor releases. There will be nothing breaking in patch releases.
-
-## Changelog
-
-I will endeavour to keep a basic changelog in the ``CHANGELOG.md`` file.
-
-## Contributing
-
-If you want to open a PR, go ahead! I don't really see much need as this is geared towards my cogs but I will probably accept it.
-
-This repo as some tests in tox and a checks workflow.
