@@ -3,7 +3,6 @@ import functools
 import sqlite3
 from asyncio.events import AbstractEventLoop
 
-import pandas
 from redbot.core.bot import Red
 from redbot.core.data_manager import cog_data_path
 
@@ -15,6 +14,11 @@ from redbot.core.data_manager import cog_data_path
 # ~1.3 sec to ~0.03 sec, dataset of ~1 week on windows
 # ~5-6 sec to ~0.04 sec, dataset of ~1 month on linux
 # reads are insignificant as only happen on cog load
+
+try:
+    import pandas
+except ImportError:
+    raise RuntimeError("Pandas must be installed for this driver.")
 
 
 class PandasSQLiteDriver:
