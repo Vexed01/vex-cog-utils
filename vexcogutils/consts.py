@@ -8,8 +8,8 @@ CROSS = "\N{CROSS MARK}"
 SNOWFLAKE_REGEX = r"\b\d{17,20}\b"
 
 SENTRY_MASTER_MSG = (
-    "Hey there! This looks like the first time you're using this cog (or you just updated to a "
-    "version which supports this). To help make this cog, and all my others, as good "
+    "Hey there! This looks like the first time you're using Vexed's cogs (or you just updated to "
+    "a version which supports this). To help make this cog, and all my others, as good "
     "and bug-free as possible, I have **opt-in** telemetry and error reporting __which affects "
     "all of my (github.com/Vexed01's) cogs__ on the Vex-Cogs repository, using Sentry. The "
     "telemetry consists of data on the cog release and performance data of backgroup tasks and "
