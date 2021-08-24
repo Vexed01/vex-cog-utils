@@ -242,11 +242,11 @@ class SentryHelper:
         assert vexcogutils.bot is not None
 
         if not await self.config.master_msg_sent():
+            self.dont_send_reminders = True
             await self.config.master_msg_sent.set(True)
             await vexcogutils.bot.send_to_owners(SENTRY_MASTER_MSG.format(cogname))
             async with self.config.cogs_notified() as c_n:
                 c_n.append(cogname)
-            self.dont_send_reminders = True
             return
 
         if cogname in await self.config.cogs_notified():
