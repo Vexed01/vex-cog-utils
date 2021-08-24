@@ -112,6 +112,22 @@ async def format_info(
     return f"{start}{boxed}"
 
 
+async def out_of_date_check(cogname: str, currentver: str) -> None:
+    """Send a log at warning level if the cog is out of date."""
+    try:
+        vers = await _get_latest_vers(cogname)
+    except Exception as e:
+        log.warning(f"Something went wrong checking if {cogname} cog is up to date. See below.")
+        return
+    if VersionInfo.from_str(currentver) < vers.cog:
+        log.warning(
+            f"Your {cogname} cog, from Vex, is out of date. You can update your cogs with the "
+            "'cog update' command in Discord."
+        )
+    else:
+        log.debug(f"{cogname} cog is up to date")
+
+
 class Vers(NamedTuple):
     cog: VersionInfo
     utils: VersionInfo
@@ -122,7 +138,7 @@ async def _get_latest_vers(cog_name: str) -> Vers:
     data: dict
     async with aiohttp.ClientSession() as session:
         async with session.get(
-            "https://vexed01.github.io/Vex-Cogs/api/v1/versions.json", timeout=3
+            "https://static.vexcodes.com/v1/versions.json", timeout=3  # ik its called static :)
         ) as r:
             data = await r.json()
             latest_cog = VersionInfo.from_str(data.get("cogs", {}).get(cog_name, "0.0.0"))
