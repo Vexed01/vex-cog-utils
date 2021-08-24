@@ -244,7 +244,10 @@ class SentryHelper:
         if not await self.config.master_msg_sent():
             self.dont_send_reminders = True
             await self.config.master_msg_sent.set(True)
-            await vexcogutils.bot.send_to_owners(SENTRY_MASTER_MSG.format(cogname))
+            try:
+                await vexcogutils.bot.send_to_owners(SENTRY_MASTER_MSG.format(cogname))
+            except Exception:
+                pass
             async with self.config.cogs_notified() as c_n:
                 c_n.append(cogname)
             return
@@ -257,11 +260,14 @@ class SentryHelper:
             # as it's disbaled, soft reminder ignored for now
             return
 
-        if self.sentry_enabled:
-            await vexcogutils.bot.send_to_owners(SENTRY_REMINDER_ON.format(cogname))
-        else:
-            self.dont_send_reminders = True
-            await vexcogutils.bot.send_to_owners(SENTRY_REMINDER_OFF.format(cogname))
+        try:
+            if self.sentry_enabled:
+                await vexcogutils.bot.send_to_owners(SENTRY_REMINDER_ON.format(cogname))
+            else:
+                self.dont_send_reminders = True
+                await vexcogutils.bot.send_to_owners(SENTRY_REMINDER_OFF.format(cogname))
+        except Exception:
+            pass
 
         async with self.config.cogs_notified() as c_n:
             c_n.append(cogname)
