@@ -117,7 +117,10 @@ async def out_of_date_check(cogname: str, currentver: str) -> None:
     try:
         vers = await _get_latest_vers(cogname)
     except Exception as e:
-        log.warning(f"Something went wrong checking if {cogname} cog is up to date. See below.", e)
+        log.debug(
+            f"Something went wrong checking if {cogname} cog is up to date. See below.", exc_info=e
+        )
+        # really doesn't matter if this fails so fine with debug level
         return
     if VersionInfo.from_str(currentver) < vers.cog:
         log.warning(
