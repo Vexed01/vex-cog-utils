@@ -200,6 +200,7 @@ class SentryHelper:
 
         for cogname, hub in self.hubs.items():
             hub.end_session()
+            assert hub.client is not None
             hub.client.close()
 
     async def get_sentry_hub(self, cogname: str, cogver: str) -> Hub:

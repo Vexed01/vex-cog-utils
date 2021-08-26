@@ -1,8 +1,11 @@
+import asyncio
 from logging import getLogger
 from typing import Dict, List, NamedTuple, Union
 
 import aiohttp
 import tabulate
+from asyncache import cached
+from cachetools import TTLCache
 from redbot.core import VersionInfo, commands
 from redbot.core import version_info as red_version
 from redbot.core.utils.chat_formatting import box
@@ -13,6 +16,10 @@ from .consts import CHECK, CROSS, DOCS_BASE
 from .version import __version__ as utils_version
 
 log = getLogger("red.vex-utils")
+
+
+cog_ver_cache: TTLCache = TTLCache(maxsize=16, ttl=300)  # ttl is 5 mins
+cog_ver_lock = asyncio.Lock()
 
 
 def format_help(self: commands.Cog, ctx: commands.Context) -> str:
@@ -70,10 +77,16 @@ async def format_info(
     str
         Simple info text.
     """
+    print(cog_ver_cache)
     try:
-        latest = await _get_latest_vers(qualified_name.lower())
+        latest = await _get_latest_vers()
 
-        cog_updated = CHECK if VersionInfo.from_str(cog_version) >= latest.cog else CROSS
+        cog_updated = (
+            CHECK
+            if VersionInfo.from_str(cog_version)
+            >= VersionInfo.from_str(latest.cogs.get(qualified_name.lower()))
+            else CROSS
+        )
         utils_updated = CHECK if VersionInfo.from_str(utils_version) >= latest.utils else CROSS
         red_updated = CHECK if red_version >= latest.red else CROSS
     except Exception:  # anything and everything, eg aiohttp error or version parsing error
@@ -115,14 +128,15 @@ async def format_info(
 async def out_of_date_check(cogname: str, currentver: str) -> None:
     """Send a log at warning level if the cog is out of date."""
     try:
-        vers = await _get_latest_vers(cogname)
+        async with cog_ver_lock:
+            vers = await _get_latest_vers()
     except Exception as e:
         log.debug(
             f"Something went wrong checking if {cogname} cog is up to date. See below.", exc_info=e
         )
         # really doesn't matter if this fails so fine with debug level
         return
-    if VersionInfo.from_str(currentver) < vers.cog:
+    if VersionInfo.from_str(currentver) < VersionInfo.from_str(vers.cogs.get(cogname)):
         log.warning(
             f"Your {cogname} cog, from Vex, is out of date. You can update your cogs with the "
             "'cog update' command in Discord."
@@ -132,19 +146,21 @@ async def out_of_date_check(cogname: str, currentver: str) -> None:
 
 
 class Vers(NamedTuple):
-    cog: VersionInfo
+    cogs: Dict[str, str]
     utils: VersionInfo
     red: VersionInfo
 
 
-async def _get_latest_vers(cog_name: str) -> Vers:
+@cached(cog_ver_cache)  # ttl is 5 mins
+async def _get_latest_vers() -> Vers:
     data: dict
+    print("hi!!")
     async with aiohttp.ClientSession() as session:
         async with session.get(
             "https://static.vexcodes.com/v1/versions.json", timeout=3  # ik its called static :)
         ) as r:
             data = await r.json()
-            latest_cog = VersionInfo.from_str(data.get("cogs", {}).get(cog_name, "0.0.0"))
+            latest_cog = data.get("cogs", {})
         async with session.get("https://pypi.org/pypi/Red-DiscordBot/json", timeout=3) as r:
             data = await r.json()
             latest_red = VersionInfo.from_str(data.get("info", {}).get("version", "0.0.0"))
