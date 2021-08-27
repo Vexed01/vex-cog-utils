@@ -77,7 +77,6 @@ async def format_info(
     str
         Simple info text.
     """
-    print(cog_ver_cache)
     try:
         latest = await _get_latest_vers()
 
@@ -154,7 +153,6 @@ class Vers(NamedTuple):
 @cached(cog_ver_cache)  # ttl is 5 mins
 async def _get_latest_vers() -> Vers:
     data: dict
-    print("hi!!")
     async with aiohttp.ClientSession() as session:
         async with session.get(
             "https://static.vexcodes.com/v1/versions.json", timeout=3  # ik its called static :)
