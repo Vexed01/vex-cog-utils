@@ -215,22 +215,22 @@ class SentryHelper:
             await asyncio.sleep(0.1)
         # not using sentry_sdk.init so other don't interfear with other CCs/cogs/packages
         # from https://github.com/getsentry/sentry-python/issues/610
-        hub = sentry_sdk.Hub(
-            sentry_sdk.Client(
-                dsn=SENTRY_DSNS.get(cogname),
-                traces_sample_rate=0.01,
-                before_send=self.remove_sensitive_data,
-                before_breadcrumb=self.remove_sensitive_data,
-                release=f"{cogname}@{cogver}",
-                debug=False,
-                max_breadcrumbs=25,
-            )
+        client = sentry_sdk.Client(
+            dsn=SENTRY_DSNS.get(cogname),
+            traces_sample_rate=0.03,
+            before_send=self.remove_sensitive_data,
+            before_breadcrumb=self.remove_sensitive_data,
+            release=f"{cogname}@{cogver}",
+            debug=False,
+            max_breadcrumbs=25,
         )
 
-        hub.scope.set_tag("utils_release", vexcogutils.__version__)
-        hub.scope.set_tag("red_release", red_version)
-        hub.scope.set_user({"id": self.uuid})
+        scope = sentry_sdk.Scope()
+        scope.set_tag("utils_release", vexcogutils.__version__)
+        scope.set_tag("red_release", red_version)
+        scope.set_user({"id": self.uuid})
 
+        hub = sentry_sdk.Hub(client, scope)
         self.hubs[cogname] = hub
 
         hub.start_session()
