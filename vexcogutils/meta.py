@@ -7,13 +7,13 @@ import tabulate
 from asyncache import cached
 from cachetools import TTLCache
 from redbot.core import VersionInfo, commands
-from redbot.core import version_info as red_version
+from redbot.core import version_info as cur_red_version
 from redbot.core.utils.chat_formatting import box
 
 from vexcogutils.loop import VexLoop
 
-from .consts import CHECK, CROSS, DOCS_BASE
-from .version import __version__ as utils_version
+from .consts import DOCS_BASE, GREEN_CIRCLE, RED_CIRCLE
+from .version import __version__ as cur_utils_version
 
 log = getLogger("red.vex-utils")
 
@@ -79,15 +79,15 @@ async def format_info(
     """
     try:
         latest = await _get_latest_vers()
+        current = _get_current_vers(cog_version, qualified_name)
+
+        cog_name = qualified_name.lower()
 
         cog_updated = (
-            CHECK
-            if VersionInfo.from_str(cog_version)
-            >= VersionInfo.from_str(latest.cogs.get(qualified_name.lower()))
-            else CROSS
+            GREEN_CIRCLE if current.cogs.get(cog_name) >= latest.cogs.get(cog_name) else RED_CIRCLE
         )
-        utils_updated = CHECK if VersionInfo.from_str(utils_version) >= latest.utils else CROSS
-        red_updated = CHECK if red_version >= latest.red else CROSS
+        utils_updated = GREEN_CIRCLE if current.utils >= latest.utils else RED_CIRCLE
+        red_updated = GREEN_CIRCLE if current.red >= latest.red else RED_CIRCLE
     except Exception:  # anything and everything, eg aiohttp error or version parsing error
         log.warning("Unable to parse versions.", exc_info=True)
         cog_updated = "Unknown"
@@ -96,28 +96,30 @@ async def format_info(
 
     start = f"{qualified_name} by Vexed.\n<https://github.com/Vexed01/Vex-Cogs>\n\n"
     versions = [
-        ["Cog", cog_version, cog_updated],
-        ["Utils", utils_version, utils_updated],
-        ["Red", str(red_version), red_updated],
+        ["Cog", current.cogs.get(cog_name), latest.cogs.get(cog_name), cog_updated],
+        ["Utils", current.utils, latest.utils, utils_updated],
+        ["Red", current.red, latest.red, red_updated],
     ]
 
     data = []
     if loops:
         for loop in loops:
-            data.append([loop.friendly_name, CHECK if loop.integrity else CROSS])
+            data.append([loop.friendly_name, GREEN_CIRCLE if loop.integrity else RED_CIRCLE])
 
     if extras:
         if data:
             data.append([])
         for key, value in extras.items():
             if isinstance(value, bool):
-                str_value = CHECK if value else CROSS
+                str_value = GREEN_CIRCLE if value else RED_CIRCLE
             else:
                 assert isinstance(value, str)
                 str_value = value
             data.append([key, str_value])
 
-    boxed = box(tabulate.tabulate(versions, headers=["", "Version", "Up to date?"]))
+    boxed = box(
+        tabulate.tabulate(versions, headers=["", "Your Version", "Latest version", "Up to date?"])
+    )
     if data:
         boxed += box(tabulate.tabulate(data, tablefmt="plain"))
 
@@ -145,7 +147,7 @@ async def out_of_date_check(cogname: str, currentver: str) -> None:
 
 
 class Vers(NamedTuple):
-    cogs: Dict[str, str]
+    cogs: Dict[str, VersionInfo]
     utils: VersionInfo
     red: VersionInfo
 
@@ -158,7 +160,7 @@ async def _get_latest_vers() -> Vers:
             "https://static.vexcodes.com/v1/versions.json", timeout=3  # ik its called static :)
         ) as r:
             data = await r.json()
-            latest_cog = data.get("cogs", {})
+            latest_cogs = data.get("cogs", {})
         async with session.get("https://pypi.org/pypi/Red-DiscordBot/json", timeout=3) as r:
             data = await r.json()
             latest_red = VersionInfo.from_str(data.get("info", {}).get("version", "0.0.0"))
@@ -166,4 +168,16 @@ async def _get_latest_vers() -> Vers:
             data = await r.json()
             latest_utils = VersionInfo.from_str(data.get("info", {}).get("version", "0.0.0"))
 
-    return Vers(latest_cog, latest_utils, latest_red)
+    obj_latest_cogs = {
+        str(cogname): VersionInfo.from_str(ver) for cogname, ver in latest_cogs.items()
+    }
+
+    return Vers(obj_latest_cogs, latest_utils, latest_red)
+
+
+def _get_current_vers(curr_cog_ver: str, qual_name: str) -> Vers:
+    return Vers(
+        {qual_name.lower(): VersionInfo.from_str(curr_cog_ver)},
+        VersionInfo.from_str(cur_utils_version),
+        cur_red_version,
+    )
