@@ -217,7 +217,7 @@ class SentryHelper:
         # from https://github.com/getsentry/sentry-python/issues/610
         client = sentry_sdk.Client(
             dsn=SENTRY_DSNS.get(cogname),
-            traces_sample_rate=0.03,
+            traces_sample_rate=0.015,
             before_send=self.remove_sensitive_data,
             before_breadcrumb=self.remove_sensitive_data,
             release=f"{cogname}@{cogver}",
