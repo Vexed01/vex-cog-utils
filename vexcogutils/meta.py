@@ -137,7 +137,7 @@ async def out_of_date_check(cogname: str, currentver: str) -> None:
         )
         # really doesn't matter if this fails so fine with debug level
         return
-    if VersionInfo.from_str(currentver) < VersionInfo.from_str(vers.cogs.get(cogname)):
+    if VersionInfo.from_str(currentver) < vers.cogs.get(cogname):
         log.warning(
             f"Your {cogname} cog, from Vex, is out of date. You can update your cogs with the "
             "'cog update' command in Discord."
