@@ -78,8 +78,8 @@ async def format_info(
         Simple info text.
     """
     cog_name = qualified_name.lower()
+    current = _get_current_vers(cog_version, qualified_name)
     try:
-        current = _get_current_vers(cog_version, qualified_name)
         latest = await _get_latest_vers()
 
         cog_updated = (
@@ -89,11 +89,8 @@ async def format_info(
         red_updated = GREEN_CIRCLE if current.red >= latest.red else RED_CIRCLE
     except Exception:  # anything and everything, eg aiohttp error or version parsing error
         log.warning("Unable to parse versions.", exc_info=True)
-        return (
-            "Something went wrong getting or parsing versions. You can still get the version of "
-            "this cog by doing `[p]help {qualified_name}`. Check the console or logs for error "
-            "details."
-        )
+        cog_updated, utils_updated, red_updated = "Unknown", "Unknown", "Unknown"
+        latest = UnknownVers({cog_name: "Unknown"})
 
     start = f"{qualified_name} by Vexed.\n<https://github.com/Vexed01/Vex-Cogs>\n\n"
     versions = [
@@ -151,6 +148,12 @@ class Vers(NamedTuple):
     cogs: Dict[str, VersionInfo]
     utils: VersionInfo
     red: VersionInfo
+
+
+class UnknownVers(NamedTuple):
+    cogs: Dict[str, str]
+    utils: str = "Unknown"
+    red: str = "Unknown"
 
 
 @cached(cog_ver_cache)  # ttl is 5 mins
