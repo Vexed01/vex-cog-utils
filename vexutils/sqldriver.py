@@ -18,7 +18,7 @@ from redbot.core.data_manager import cog_data_path
 try:
     import pandas
 except ImportError:
-    raise RuntimeError("Pandas must be installed for this driver.")
+    raise RuntimeError("Pandas must be installed for this driver to work.")
 
 
 class PandasSQLiteDriver:

@@ -10,9 +10,8 @@ from redbot.core import VersionInfo, commands
 from redbot.core import version_info as cur_red_version
 from redbot.core.utils.chat_formatting import box
 
-from vexcogutils.loop import VexLoop
-
 from .consts import DOCS_BASE, GREEN_CIRCLE, RED_CIRCLE
+from .loop import VexLoop
 from .version import __version__ as cur_utils_version
 
 log = getLogger("red.vex-utils")

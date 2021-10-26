@@ -8,7 +8,7 @@ import tabulate
 from redbot.core.utils.chat_formatting import box, pagify
 from sentry_sdk import Hub
 
-from vexcogutils.consts import CHECK, CROSS
+from .consts import CHECK, CROSS
 
 
 class VexLoop:
