@@ -15,3 +15,4 @@ jobs:
         workflow: Sync utils
         repo: Vexed01/Vex-Cogs
         token: ${{ secrets.WORKFLOW_PAT }}
+        ref: master
