@@ -1,0 +1,17 @@
+name: Trigger deployment
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  deploy:
+    name: Trigger deployment
+    runs-on: ubuntu-latest
+    steps:
+    - name: Trigger deployment on main cogs repo
+      uses: benc-uk/workflow-dispatch@v1
+      with:
+        workflow: syncutils
+        repo: Vexed01/Vex-Cogs
+        token: ${{ secrets.WORKFLOW_PAT }}
