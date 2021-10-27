@@ -12,6 +12,6 @@ jobs:
     - name: Trigger deployment on main cogs repo
       uses: benc-uk/workflow-dispatch@v1
       with:
-        workflow: syncutils
+        workflow: Sync utils
         repo: Vexed01/Vex-Cogs
         token: ${{ secrets.WORKFLOW_PAT }}
