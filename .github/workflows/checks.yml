@@ -15,7 +15,6 @@ jobs:
           - style-black
           - style-isort
           - lint-flake8
-          - type-mypy
         include:
           - tox_env: style-black
             friendly_name: Style (black)
@@ -23,8 +22,6 @@ jobs:
             friendly_name: Style (isort)
           - tox_env: lint-flake8
             friendly_name: Lint (flake8)
-          - tox_env: type-mypy
-            friendly_name: Type check (mypy)
 
       fail-fast: false
 
@@ -48,3 +45,20 @@ jobs:
           TOXENV: ${{ matrix.tox_env }}
         run: |
           tox
+
+  pyright:
+    name: Pyright
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install Red-DiscordBot types-tabulate types-cachetools asyncache
+
+      - name: Run pyright
+        uses: jakebailey/pyright-action@v1

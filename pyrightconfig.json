@@ -1,0 +1,4 @@
+{"stubPath": ".stubs",
+"pythonVersion": "3.8",
+"useLibraryCodeForTypes": true,
+"exclude": [".stubs", ".venv", ".tox", ".git"]}
