@@ -87,7 +87,7 @@ async def format_info(
         red_updated = GREEN_CIRCLE if current.red >= latest.red else RED_CIRCLE
     except Exception:  # anything and everything, eg aiohttp error or version parsing error
         log.warning("Unable to parse versions.", exc_info=True)
-        cog_updated, utils_updated, red_updated = "Unknown", "Unknown", "Unknown"
+        cog_updated, _, red_updated = "Unknown", "Unknown", "Unknown"
         latest = UnknownVers({cog_name: "Unknown"})
 
     start = f"{qualified_name} by Vexed.\n<https://github.com/Vexed01/Vex-Cogs>\n\n"
