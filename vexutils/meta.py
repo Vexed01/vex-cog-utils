@@ -121,7 +121,7 @@ async def format_info(
             f"To update the bundled utils, use the `{ctx.clean_prefix}utils update` command.\n"
         )
     if not red_updated:
-        update_msg += f"To update Red, see https://docs.discord.red/en/stable/update_red.html\n"
+        update_msg += "To update Red, see https://docs.discord.red/en/stable/update_red.html\n"
 
     data = []
     if loops:
