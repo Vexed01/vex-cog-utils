@@ -2,7 +2,12 @@ import datetime
 from io import StringIO
 from typing import Any, Literal, Sequence, Union
 
-from redbot.core.utils.chat_formatting import humanize_list, humanize_number, inline
+from redbot.core.utils.chat_formatting import (
+    box,
+    humanize_list,
+    humanize_number,
+    inline,
+)
 from rich.console import Console
 
 TimestampFormat = Literal["f", "F", "d", "D", "t", "T", "R"]
