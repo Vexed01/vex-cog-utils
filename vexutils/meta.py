@@ -8,10 +8,9 @@ import aiohttp
 from redbot.core import VersionInfo, commands
 from redbot.core import version_info as cur_red_version
 from rich import box as rich_box
-from rich.table import Table
+from rich.table import Table  # type:ignore
 
-from vexutils.chat import no_colour_rich_markup  # type:ignore
-
+from .chat import no_colour_rich_markup
 from .consts import DOCS_BASE, GREEN_CIRCLE, RED_CIRCLE
 from .loop import VexLoop
 
