@@ -117,8 +117,7 @@ async def format_info(
         latest = UnknownVers()
 
     start = (
-        f"{qualified_name} by Vexed.\n<https://github.com/Vexed01/Vex-Cogs>\n"
-        "Support my work: <https://ko-fi.com/vexed>\n\n"
+        f"{qualified_name} by Vexed.\n<https://github.com/Vexed01/Vex-Cogs>\n\n"
     )
 
     main_table = Table(
